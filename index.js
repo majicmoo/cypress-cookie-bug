@@ -55,7 +55,6 @@ app.post("/api/login", function(req, res) {
   } else if (users.includes(username) && password === userPassword) {
     req.session.user = user;
     res.cookie("username", username, {
-      domain: "something.megantestingthings.com",
       path: "/"
     });
     console.log("adding " + req.sessionID + " to sessions");
