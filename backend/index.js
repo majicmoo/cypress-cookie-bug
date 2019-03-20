@@ -24,11 +24,11 @@ app.use(
       const sessionId = uuid();
       console.log("hello", sessionId);
 
-      return sessionId; // use UUIDs for session IDs
+      return sessionId;
     },
     secret: "keyboard cat",
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false
   })
 );
 
@@ -38,11 +38,11 @@ var auth = function(req, res, next) {
   console.log("currentSessions", sessions);
 
   if (!req.sessionID) {
-    return res.send(200, "unauthorised");
+    return res.status(401).send();
   }
 
   if (sessions.findIndex(a => a == req.sessionID) === -1) {
-    return res.send(200, "unauthorised");
+    return res.status(401).send();
   }
   return next();
 };
@@ -66,7 +66,7 @@ app.post("/api/login", function(req, res) {
 });
 
 // Logout endpoint
-app.get("/logout", function(req, res) {
+app.get("/api/logout", function(req, res) {
   sessions = [];
   console.log("removing " + req.sessionID + " from sessions");
 
@@ -76,13 +76,10 @@ app.get("/logout", function(req, res) {
   res.send("logout success!");
 });
 
-app.get("/", auth, function(req, res) {
-  res.sendFile(path.join(__dirname + "/html/index.html"));
+app.get("/api/is-authed", auth, function(req, res) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.status(200).send();
 });
 
-app.get("/page-2", auth, function(req, res) {
-  res.sendFile(path.join(__dirname + "/html/page2.html"));
-});
-
-app.listen(3000);
-console.log("app running at http://localhost:3000");
+app.listen(9000);
+console.log("app running at http://localhost:9000");

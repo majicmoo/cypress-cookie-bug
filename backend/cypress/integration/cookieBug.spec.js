@@ -7,7 +7,7 @@ context("cookie bug", () => {
     // sign in with user1
     cy.visit("/");
     cy.login("user1");
-    cy.reload();
+    cy.visit("/");
     cy.get("#index").should("exist");
 
     cy.getCookie("username")
@@ -21,18 +21,14 @@ context("cookie bug", () => {
       .its("value")
       .should("equal", "user1"); // passes
 
-    // logout
-    cy.request({
-      method: "GET",
-      url: `/logout`
-    });
+    cy.logout();
     cy.clearCookies();
 
     // sign in with user-2
     cy.visit("/");
 
     cy.login("user2");
-    cy.reload();
+    cy.visit("/");
     cy.get("#index").should("exist");
 
     cy.getCookie("username")
@@ -40,6 +36,7 @@ context("cookie bug", () => {
       .should("equal", "user2"); // passes
 
     cy.visit("/page-2");
+
     cy.get("#page-2").should("exist");
 
     cy.getCookie("username")
